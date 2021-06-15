@@ -1,13 +1,13 @@
 import {Button, Textarea} from "@chakra-ui/react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import socket from '../socket/Socket'
 
 const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
+    const messageRef = useRef()
 
     useEffect(() => {
-        console.log('CHATNAME: ' + name)
         socket.connect()
 
         if (isJoin && !isCreate) {
@@ -39,9 +39,12 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
 
         return () => {
             socket.disconnect()
-            // onAuth(false)
         }
     }, [])
+
+    useEffect(() => {
+        messageRef.current.scrollIntoView({behavior: 'smooth'})
+    })
 
     //SEND ON ENTER
     const handleKey = (e) => {
@@ -60,9 +63,6 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
         setMessage('')
     }
 
-    const setLocal = () => {
-    }
-
     return (
         <div>
             <div>ROOM ID: {roomID}</div>
@@ -72,6 +72,7 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
                         {messages.map((msg, index) => (
                             <p key={index}>{msg}</p>
                         ))}
+                        <div ref={messageRef}/>
                     </div>
                     <div>
                         <div className='chat-text'>

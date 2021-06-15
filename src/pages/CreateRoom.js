@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import {Button, ButtonGroup, FormControl, Input, InputGroup} from "@chakra-ui/react";
 
-const CreateRoom = ({name, roomID, onNameChange, handleCreate}) => {
+const CreateRoom = ({name, onNameChange, handleCreate}) => {
 
     return (
         <>

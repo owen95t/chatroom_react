@@ -3,7 +3,7 @@ import socketIOClient from 'socket.io-client';
 
 const ENDPOINT = 'http://localhost:4000/';
 
-const ClientSocket = ({ username, room }) => {
+const useSocket = ({ username, room }) => {
     const socketRef = useRef();
     const [users, setUsers] = useState([]);
     const [messages, setMessages] = useState([]);
@@ -47,4 +47,4 @@ const ClientSocket = ({ username, room }) => {
     return { users, messages, sendMessage, error, connectSocket };
 };
 
-export default ClientSocket;
+export default useSocket;
