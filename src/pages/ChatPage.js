@@ -7,14 +7,16 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
-        console.log(name)
+        console.log('CHATNAME: ' + name)
         socket.connect()
 
         if (isJoin && !isCreate) {
             //JOIN ROOM
-            socket.emit('join', {name, roomID})
+            console.log('JOIN ROOM')
+            socket.emit('join', {name, room: roomID})
         } else if (isCreate && !isJoin) {
             //CREATE ROOM
+            console.log('CREATE ROOM')
             socket.emit('create', name)
         }
 
@@ -23,12 +25,22 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
             onRoomChange(room)
         })
 
-        socket.on('message', msg => {
-            setMessages(messages => [...messages, msg])
+        socket.on('message', response => {
+            console.log('Responses: '+response)
+            setMessages(messages => [...messages, response.message])
         });
 
-        socket.on('sendMessage', message)
+        socket.on('event-message', response => {
+            console.log(response)
+            setMessages(messages => [...messages, response])
+        })
 
+
+
+        return () => {
+            socket.disconnect()
+            // onAuth(false)
+        }
     }, [])
 
     //SEND ON ENTER
@@ -44,6 +56,11 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
     //HANDLE SOCKET SEND OPERATION
     const sendMessage = (msg) => {
         socket.emit('sendMessage', msg)
+        setMessages(messages => [...messages, msg])
+        setMessage('')
+    }
+
+    const setLocal = () => {
     }
 
     return (
@@ -51,9 +68,9 @@ const ChatPage = ({name, roomID, onRoomChange, isJoin, isCreate}) => {
             <div>ROOM ID: {roomID}</div>
             <div className='chat-wrapper'>
                 <div className='chat-form'>
-                    <div className='text-area'>
-                        {messages.map(msg => (
-                            <p>{msg}</p>
+                    <div className='text-area' style={{overflow: 'auto'}}>
+                        {messages.map((msg, index) => (
+                            <p key={index}>{msg}</p>
                         ))}
                     </div>
                     <div>
